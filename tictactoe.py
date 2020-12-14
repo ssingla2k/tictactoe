@@ -19,6 +19,10 @@ def initial_state():
 
 
 def player(board):
+    if board.count(X) > board.count(O):
+        return O
+    else:
+        return X
     """
     Returns player who has the next turn on a board.
     """
