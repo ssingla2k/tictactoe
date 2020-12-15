@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 import math
+import logging
 
 X = "X"
 O = "O"
@@ -40,18 +41,20 @@ def actions(board):
     Returns set of all possible actions (i, j) available on the board.
     """
     actionset=[]
-    for i in range(0,2):
-        for j in range(0,2):
+    for i in range(0,3):
+        for j in range(0,3):
             if board[i][j] is EMPTY:
                 actionset.append((i,j))
     return actionset
 
 
-def result(board, action):
+def result(board, action,p):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    raise NotImplementedError
+    #print(action)
+    board[action[0]][action[1]] = p
+    return board
 
 
 def winner(board):
@@ -75,8 +78,12 @@ def terminal(board):
         return True
     for row in board:
         for e in row:
-            if e is not EMPTY:
+            #logging.debug("test %s",e)
+            if e is None:
+                #logging.debug(e)
                 return False
+    #print(board)
+    #logging.debug("did not find a empty cell in board")
     return True
 
 
@@ -84,6 +91,7 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
+    #logging.debug("in utility")
     def isWinner(board,player):
         #check row win
         for i in range(0,3):
@@ -124,10 +132,13 @@ def utility(board):
             return True
         return False
     if isWinner(board,X):
+        #logging.debug("returning from utility %d",1)
         return 1
     elif isWinner(board,O):
+        #logging.debug("returning from utility %d",-1)
         return -1
     else:
+        #logging.debug("returning from utility %d",0)
         return 0
     
 
@@ -136,4 +147,37 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    logging.debug("calling minimax with board %s",board)
+    def minmax_int(board,isMaximize,depth):
+        if terminal(board):
+            return (utility(board),None)
+        board_temp = board.copy()
+        if isMaximize:
+            bestval = -100
+            a=None
+            for action in actions(board_temp):
+                board_temp = result(board_temp,action,player(board_temp))
+                value = minmax_int(board_temp,False,depth+1)[0]
+                if bestval < value:
+                    bestval=value
+                    a = action
+            return (bestval,a)
+        else:
+            bestval=100
+            a=None
+            for action in actions(board_temp):
+                board_temp = result(board_temp,action,player(board_temp))
+                value = minmax_int(board_temp,True,depth+1)[0]
+                if bestval > value:
+                    bestval=value
+                    a = action
+            return (bestval,a)
+
+    if player(board) == X:
+        r = minmax_int(board, True,0)
+        logging.debug("minmax_int result for X %s",r)
+        return r[1]
+    else:
+        r = minmax_int(board, False,0)
+        logging.debug("minmax_int result for O %s",r)
+        return r[1]

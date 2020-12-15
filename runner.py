@@ -1,12 +1,14 @@
 import pygame
 import sys
 import time
+import logging
 
 import tictactoe as ttt
 
 pygame.init()
 size = width, height = 600, 400
 
+logging.basicConfig(level=logging.DEBUG)
 # Colors
 black = (0, 0, 0)
 white = (255, 255, 255)
@@ -20,6 +22,7 @@ moveFont = pygame.font.Font("OpenSans-Regular.ttf", 60)
 user = None
 board = ttt.initial_state()
 ai_turn = False
+ai_player=None
 
 while True:
 
@@ -60,9 +63,11 @@ while True:
             if playXButton.collidepoint(mouse):
                 time.sleep(0.2)
                 user = ttt.X
+                ai_player=ttt.O
             elif playOButton.collidepoint(mouse):
                 time.sleep(0.2)
                 user = ttt.O
+                ai_player=ttt.X
 
     else:
 
@@ -90,10 +95,11 @@ while True:
             tiles.append(row)
 
         game_over = ttt.terminal(board)
+        #logging.debug("game_over=%s",game_over)
         player = ttt.player(board)
-
         # Show title
         if game_over:
+            #logging.debug("in game_over condition")
             winner = ttt.winner(board)
             if winner is None:
                 title = f"Game Over: Tie."
@@ -111,9 +117,11 @@ while True:
         # Check for AI move
         if user != player and not game_over:
             if ai_turn:
+                logging.debug("ai_turn with user = %s",user)
                 time.sleep(0.5)
                 move = ttt.minimax(board)
-                board = ttt.result(board, move)
+                logging.debug("ai move from minimax %s",move)
+                board = ttt.result(board, move,ai_player)
                 ai_turn = False
             else:
                 ai_turn = True
@@ -125,7 +133,7 @@ while True:
             for i in range(3):
                 for j in range(3):
                     if (board[i][j] == ttt.EMPTY and tiles[i][j].collidepoint(mouse)):
-                        board = ttt.result(board, (i, j))
+                        board = ttt.result(board, (i, j),user)
 
         if game_over:
             againButton = pygame.Rect(width / 3, height - 65, width / 3, 50)

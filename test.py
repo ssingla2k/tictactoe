@@ -12,3 +12,7 @@ print(board)
 for row in board:
 	print(row.count(t.O))
 print (t.player(board))
+print(t.actions(board))
+
+for a in t.actions(board):
+	print(t.result(board,a))
