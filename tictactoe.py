@@ -149,7 +149,7 @@ def minimax(board,ai_player):
     Returns the optimal action for the current player on the board.
     """
     logging.debug("calling minimax with board %s",board)
-    def minmax_int(board,isMaximize,depth):
+    def minmax_int(board,isMaximize,depth,p):
         if terminal(board):
             logging.debug("minmax_int terminal case with depth %d",depth)
             return (utility(board),None)
@@ -158,8 +158,8 @@ def minimax(board,ai_player):
             bestval = -100
             a=None
             for action in actions(board_temp):
-                board_temp = result(board_temp,action,player(board_temp))
-                value = minmax_int(board_temp,False,depth+1)[0]
+                board_temp = result(board_temp,action,p)
+                value = minmax_int(board_temp,False,depth+1,O)[0]
                 if bestval < value:
                     bestval=value
                     a = action
@@ -168,18 +168,18 @@ def minimax(board,ai_player):
             bestval=100
             a=None
             for action in actions(board_temp):
-                board_temp = result(board_temp,action,player(board_temp))
-                value = minmax_int(board_temp,True,depth+1)[0]
+                board_temp = result(board_temp,action,p)
+                value = minmax_int(board_temp,True,depth+1,X)[0]
                 if bestval > value:
                     bestval=value
                     a = action
             return (bestval,a)
 
     if ai_player == X:
-        r = minmax_int(board, True,0)
+        r = minmax_int(board, True,0,X)
         logging.debug("minmax_int result for X %s",r)
         return r[1]
     else:
-        r = minmax_int(board, False,0)
+        r = minmax_int(board, False,0,O)
         logging.debug("minmax_int result for O %s",r)
         return r[1]
