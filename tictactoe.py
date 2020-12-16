@@ -144,7 +144,7 @@ def utility(board):
     
 
 
-def minimax(board):
+def minimax(board,ai_player):
     """
     Returns the optimal action for the current player on the board.
     """
@@ -175,7 +175,7 @@ def minimax(board):
                     a = action
             return (bestval,a)
 
-    if player(board) == X:
+    if ai_player == X:
         r = minmax_int(board, True,0)
         logging.debug("minmax_int result for X %s",r)
         return r[1]

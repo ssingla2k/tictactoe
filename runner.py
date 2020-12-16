@@ -119,7 +119,7 @@ while True:
             if ai_turn:
                 logging.debug("ai_turn with user = %s",user)
                 time.sleep(0.5)
-                move = ttt.minimax(board)
+                move = ttt.minimax(board,ai_player)
                 logging.debug("ai move from minimax %s",move)
                 board = ttt.result(board, move,ai_player)
                 ai_turn = False
