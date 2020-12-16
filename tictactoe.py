@@ -4,6 +4,7 @@ Tic Tac Toe Player
 
 import math
 import logging
+import copy
 
 X = "X"
 O = "O"
@@ -48,13 +49,13 @@ def actions(board):
     return actionset
 
 
-def result(board, action,p):
+def result(b, action,p):
     """
     Returns the board that results from making move (i, j) on the board.
     """
     #print(action)
-    board[action[0]][action[1]] = p
-    return board
+    b[action[0]][action[1]] = p
+    return b
 
 
 def winner(board):
@@ -150,8 +151,9 @@ def minimax(board):
     logging.debug("calling minimax with board %s",board)
     def minmax_int(board,isMaximize,depth):
         if terminal(board):
+            logging.debug("minmax_int terminal case with depth %d",depth)
             return (utility(board),None)
-        board_temp = board.copy()
+        board_temp = copy.deepcopy(board)
         if isMaximize:
             bestval = -100
             a=None
